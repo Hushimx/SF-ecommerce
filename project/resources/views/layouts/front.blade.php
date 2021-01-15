@@ -689,7 +689,7 @@
 				</div>
 				<div class="col-md-6 col-lg-3 payment-footer1">
 					<div class="footer-widget info-link-widget">
-						<h4 class="title">
+						<h4 class="title" style="color: black;">
 								{{ $langg->lang21 }}
 						</h4> 
 						<div class="footer-payment ">
