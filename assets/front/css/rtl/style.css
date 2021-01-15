@@ -9230,3 +9230,10 @@ line-height: unset;
 .d a:hover {background-color: #ddd;}
 
 .show {display: block;}
+
+.payment-footer1{
+  background-color: azure;
+color: black; important
+border-radius: 2%;
+
+}
