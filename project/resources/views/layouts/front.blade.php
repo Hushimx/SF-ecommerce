@@ -689,18 +689,15 @@
 				</div>
 				<div class="col-md-6 col-lg-3 payment-footer1">
 					<div class="footer-widget info-link-widget">
-						<h4 class="title" style="color: black;">
+						<h4 class="title" style="color: #143250;">
 								{{ $langg->lang21 }}
 						</h4> 
 						<div class="footer-payment ">
 							
-							<img src="https://assets.salla.cloud/themes/default/assets/images/mada.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/cc.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/bank.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/stcpay.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/applepay.svg?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/tabby_installment.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/cod.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="{{asset('assets/images/mada.png')}}" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="{{asset('assets/images/VM.png')}}" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="{{asset('assets/images/pp.png')}}" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="{{asset('assets/images/apay.png')}}" style="max-width: 70px;margin: 1px 3px;" alt="">
 						</div>
 
 
