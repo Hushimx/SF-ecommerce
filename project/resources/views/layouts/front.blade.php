@@ -687,12 +687,12 @@
 						</ul>
 					</div>
 				</div>
-				<div class="col-md-6 col-lg-3">
+				<div class="col-md-6 col-lg-3 payment-footer1">
 					<div class="footer-widget info-link-widget">
 						<h4 class="title">
 								{{ $langg->lang21 }}
-						</h4>
-						<div class="footer-payment">
+						</h4> 
+						<div class="footer-payment ">
 							
 							<img src="https://assets.salla.cloud/themes/default/assets/images/mada.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
 							<img src="https://assets.salla.cloud/themes/default/assets/images/cc.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
