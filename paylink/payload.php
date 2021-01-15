@@ -2,7 +2,7 @@
 include_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
-function conn($url, $req, $data)
+function conn($url, $req, $data, $auth)
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -16,7 +16,7 @@ function conn($url, $req, $data)
         CURLOPT_CUSTOMREQUEST => $req,
         CURLOPT_POSTFIELDS => $data,
         CURLOPT_HTTPHEADER => array(
-            'Authorization: true',
+            'Authorization:' . $auth . ' ',
             'Content-Type: application/json'
         ),
     ));
@@ -32,7 +32,7 @@ function GetToken()
 {
     global $setting;
     //$arr = array();
-    $arr = conn("api/auth", "POST", json_encode($setting));
+    $arr = conn("api/auth", "POST", json_encode($setting), "");
     //$arr = json_decode($arr);
     return $arr['id_token'];
 }
@@ -50,26 +50,23 @@ function addInvoice($token, $amount, $clientEmail, $clientMobile, $clientName, $
         "orderNumber" => $orderNumber,
         "products" => $products
     );
-    //print_r($data);
-     $arr = conn("api/addInvoice", "POST", json_encode($data));
-    
+    //print_r(json_encode($data));
+    $arr = conn("api/addInvoice", "POST", json_encode($data), $token);
+
     return $arr;
 }
 
 $products01 = array(
     [
-        "description"=> "Brown Hand bag leather for ladies",
-        "imageSrc"=> "http://merchantwebsite.com/img/img1.jpg",
-        "price"=> 150,
-        "qty"=> 1,
-        "title"=> "Hand bag"
-    ],
-    [
-        "description"=> "Brown Hand bag leather for ladies",
-        "imageSrc"=> "http://merchantwebsite.com/img/img1.jpg",
-        "price"=> 150,
-        "qty"=> 1,
-        "title"=> "Hand bag"
+        "description" => "Brown Hand bag leather for ladies",
+        "imageSrc" => "http://merchantwebsite.com/img/img1.jpg",
+        "price" => 150,
+        "qty" => 1,
+        "title" => "Hand bag"
     ]
 );
-echo addInvoice(GetToken(), "0", "Mushari.f16@hotmail.com", "966599119115", "Mushari Alshqar", "note", "Inv01", $products01);
+$token = GetToken();
+echo $token ;
+print_r(json_encode(
+    addInvoice($token, 5, "myclient@email.com", "0509200900", "Zaid Matooq", "This invoice is for VIP client.", "MERCHANT-ANY-UNIQUE-ORDER-NUMBER-123123123", $products01)
+));
