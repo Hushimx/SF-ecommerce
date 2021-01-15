@@ -687,43 +687,21 @@
 						</ul>
 					</div>
 				</div>
-				<div class="col-md-6 col-lg-2">
+				<div class="col-md-6 col-lg-3 payment-footer1">
 					<div class="footer-widget info-link-widget">
 						<h4 class="title">
 								{{ $langg->lang21 }}
-						</h4>
-						<div class="col-md-4 footer-payment">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/mada.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px; fload:left;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/cc.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/bank.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/stcpay.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/applepay.svg?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/tabby_installment.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-							<img src="https://assets.salla.cloud/themes/default/assets/images/cod.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
+						</h4> 
+						<div class="footer-payment ">
+							
+							<img src="https://assets.salla.cloud/themes/default/assets/images/mada.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="https://assets.salla.cloud/themes/default/assets/images/cc.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="https://assets.salla.cloud/themes/default/assets/images/bank.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="https://assets.salla.cloud/themes/default/assets/images/stcpay.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="https://assets.salla.cloud/themes/default/assets/images/applepay.svg?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="https://assets.salla.cloud/themes/default/assets/images/tabby_installment.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
+							<img src="https://assets.salla.cloud/themes/default/assets/images/cod.png?v=v1.3.783" style="max-width: 70px;margin: 1px 3px;" alt="">
 						</div>
-						<!-- 
-
-
-
-<div class="col-md-4 footer-payment">
-<h2 class="footer-title"><span>طرق الدفع</span></h2>
-<img src="https://assets.salla.cloud/themes/default/assets/images/mada.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<img src="https://assets.salla.cloud/themes/default/assets/images/cc.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<img src="https://assets.salla.cloud/themes/default/assets/images/bank.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<img src="https://assets.salla.cloud/themes/default/assets/images/stcpay.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<img src="https://assets.salla.cloud/themes/default/assets/images/applepay.svg?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<img src="https://assets.salla.cloud/themes/default/assets/images/tabby_installment.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<img src="https://assets.salla.cloud/themes/default/assets/images/cod.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-<a href="https://maroof.sa/131669" target="_blank" rel="noopener noreferrer">
-<img src="https://assets.salla.cloud/themes/default/assets/images/maroof-footer.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-</a>
-<img src="https://assets.salla.cloud/themes/default/assets/images/apply_pay.png?v=v1.3.783" style="max-width: 50px;margin: 0 3px;" alt="">
-</div>
-
-
-
-
-						-->
 
 
 					</div>
