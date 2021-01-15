@@ -12,9 +12,9 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => 'POST',
   CURLOPT_POSTFIELDS =>'{
-  "apiId": "APP_ID_1610649563",
+  "apiId": "APP_ID_1123453311",
   "persistToken": false,
-  "secretKey": "742f607b-7c7c-3ce2-81ce-2ada8a66c4cb"
+  "secretKey": "0662abb5-13c7-38ab-cd12-236e58f43766"
 }',
   CURLOPT_HTTPHEADER => array(
     'Content-Type: application/json'
