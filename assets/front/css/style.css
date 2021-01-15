@@ -7329,3 +7329,9 @@ input[type=checkbox]:checked:disabled + label:before {
       background: #35b5ab;
       width: 50px
     }
+    .payment-footer1{
+      background-color: azure;
+      color: black !important;
+      border-radius: 2%; 
+      
+    }
