@@ -97,19 +97,24 @@ class PaylinkPaymentController extends Controller
 
 
 
-        if ($order['currency_sign'] == "S.R") {
-            $order['pay_amount'] = $request->total;
-        } elseif ($order['currency_sign'] == "$") {
-            $order['pay_amount'] = $request->total * 3.75;
-        } elseif ($order['currency_sign'] == "€") {
-            $order['pay_amount'] = $request->total * 4.52834;
-        } else {
-            return redirect()->back()->with('unsuccess', "currency value Doesn't Match.");
-        }
+
+
+
         $order['user_id'] = $request->user_id;
         $order['cart'] = utf8_encode(bzcompress(serialize($cart), 9));
         $order['totalQty'] = $request->totalQty;
-        $order['pay_amount'] = round($item_amount / $curr->value, 2)  + $request->shipping_cost + $request->packing_cost;
+        // $order['pay_amount'] = round($item_amount / $curr->value, 2)  + $request->shipping_cost + $request->packing_cost;
+
+        if ( $curr->sign == "S.R") {
+            $order['pay_amount'] = $request->total;
+        } elseif ($curr->sign  == "$") {
+            $order['pay_amount'] = $request->total * 3.75;
+        } elseif ($curr->sign  == "€") {
+            $order['pay_amount'] = $request->total * 4.52834;
+        } else {
+            // return redirect()->back()->with('unsuccess', "currency value Doesn't Match.");
+        }
+
         $order['method'] = $request->method;
         $order['customer_email'] = $request->email;
         $order['customer_name'] = $request->name;
@@ -153,6 +158,7 @@ class PaylinkPaymentController extends Controller
             $order['affilate_charge'] = $sub;
         }
         $order->save();
+
 
         $track = new OrderTrack;
         $track->title = 'Pending';
@@ -289,18 +295,6 @@ class PaylinkPaymentController extends Controller
             $response = json_decode($response, true);
             return $response;
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         $backcall = Addinv(GetToken($settingV), $order);
