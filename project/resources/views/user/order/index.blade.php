@@ -22,6 +22,7 @@
 														<th>{{ $langg->lang278 }}</th>
 														<th>{{ $langg->lang279 }}</th>
 														<th>{{ $langg->totalq1 }}</th>
+														<th>{{ $langg->paymentstat22 }}</th>
 														<th>{{ $langg->lang280 }}</th>                                                        
 														<th>{{ $langg->lang281 }}</th>
 														<th></th>
@@ -39,6 +40,10 @@
 														<td>
 																{{$order->totalQty}}
 														</td>
+														<td>
+														{{$order->payment_status == 'Pending' ? "$langg->unpaid2222":"$langg->paid00011"}}
+														</td>
+
                 										<td>
 																{{$order->currency_sign}}{{ round($order->pay_amount * $order->currency_value , 2) }}
 														</td>
