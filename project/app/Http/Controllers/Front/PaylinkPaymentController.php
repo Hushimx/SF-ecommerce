@@ -91,22 +91,131 @@ class PaylinkPaymentController extends Controller
         //$success_url = action('Front\PaylinkPaymentController@payreturn');
         $item_name = $settings->title . " Order";
         $item_amount = $request->total / $curr->value;
+        $item_number = str_random(4) . time();
 
         //$order['pay_amount'] = round($item_amount / $curr->value, 2)  + $request->shipping_cost + $request->packing_cost;
 
 
-        $order['currency_sign'] = $curr->sign;
-        $order['currency_value'] = $curr->value;
 
         if ($order['currency_sign'] == "S.R") {
             $order['pay_amount'] = $request->total;
         } elseif ($order['currency_sign'] == "$") {
             $order['pay_amount'] = $request->total * 3.75;
-        } elseif ($order['currency_sign'] == "€"){
+        } elseif ($order['currency_sign'] == "€") {
             $order['pay_amount'] = $request->total * 4.52834;
-        }else{
-            return redirect()->back()->with('unsuccess',"currency value Doesn't Match.");
+        } else {
+            return redirect()->back()->with('unsuccess', "currency value Doesn't Match.");
         }
+        $order['user_id'] = $request->user_id;
+        $order['cart'] = utf8_encode(bzcompress(serialize($cart), 9));
+        $order['totalQty'] = $request->totalQty;
+        $order['pay_amount'] = round($item_amount / $curr->value, 2)  + $request->shipping_cost + $request->packing_cost;
+        $order['method'] = $request->method;
+        $order['customer_email'] = $request->email;
+        $order['customer_name'] = $request->name;
+        $order['customer_phone'] = $request->phone;
+        $order['order_number'] = $item_number;
+        $order['shipping'] = $request->shipping;
+        $order['pickup_location'] = $request->pickup_location;
+        $order['customer_address'] = $request->address;
+        $order['customer_country'] = $request->customer_country;
+        $order['customer_city'] = $request->city;
+        $order['customer_zip'] = $request->zip;
+        $order['shipping_email'] = $request->shipping_email;
+        $order['shipping_name'] = $request->shipping_name;
+        $order['shipping_phone'] = $request->shipping_phone;
+        $order['shipping_address'] = $request->shipping_address;
+        $order['shipping_country'] = $request->shipping_country;
+        $order['shipping_city'] = $request->shipping_city;
+        $order['shipping_zip'] = $request->shipping_zip;
+        $order['order_note'] = $request->order_notes;
+        $order['coupon_code'] = $request->coupon_code;
+        $order['coupon_discount'] = $request->coupon_discount;
+        $order['payment_status'] = "Pending";
+        $order['currency_sign'] = $curr->sign;
+        $order['currency_value'] = $curr->value;
+        $order['shipping_cost'] = $request->shipping_cost;
+        $order['packing_cost'] = $request->packing_cost;
+        $order['tax'] = $request->tax;
+        $order['dp'] = $request->dp;
+
+        $order['adapter_name'] = $request->adapter_name;
+        $order['transfer_amount'] = $request->transfer_amount;
+        $order['transfer_date'] = $request->transfer_date;
+        $order['transaction_id'] = $request->transaction_id;
+        if (Session::has('affilate')) {
+            $val = $request->total / 100;
+            $sub = $val * $settings->affilate_charge;
+            $user = User::findOrFail(Session::get('affilate'));
+            $user->affilate_income += $sub;
+            $user->update();
+            $order['affilate_user'] = $user->name;
+            $order['affilate_charge'] = $sub;
+        }
+        $order->save();
+
+        $track = new OrderTrack;
+        $track->title = 'Pending';
+        $track->text = 'You have successfully placed your order.';
+        $track->order_id = $order->id;
+        $track->save();
+
+        if ($request->coupon_id != "") {
+            $coupon = Coupon::findOrFail($request->coupon_id);
+            $coupon->used++;
+            if ($coupon->times != null) {
+                $i = (int)$coupon->times;
+                $i--;
+                $coupon->times = (string)$i;
+            }
+            $coupon->update();
+        }
+
+        foreach ($cart->items as $prod) {
+            $x = (string)$prod['stock'];
+            if ($x != null) {
+                $product = Product::findOrFail($prod['item']['id']);
+                $product->stock =  $prod['stock'];
+                $product->update();
+            }
+        }
+
+        $notf = null;
+
+        foreach ($cart->items as $prod) {
+            if ($prod['item']['user_id'] != 0) {
+                $vorder =  new VendorOrder;
+                $vorder->order_id = $order->id;
+                $vorder->user_id = $prod['item']['user_id'];
+                $notf[] = $prod['item']['user_id'];
+                $vorder->qty = $prod['qty'];
+                $vorder->price = $prod['price'];
+                $vorder->order_number = $order->order_number;
+                $vorder->save();
+            }
+        }
+
+
+        if (!empty($notf)) {
+            $users = array_unique($notf);
+            foreach ($users as $user) {
+                $notification = new UserNotification;
+                $notification->user_id = $user;
+                $notification->order_number = $order->order_number;
+                $notification->save();
+            }
+        }
+
+        Session::put('temporder', $order);
+        Session::put('tempcart', $cart);
+
+        Session::forget('cart');
+        Session::forget('already');
+        Session::forget('coupon');
+        Session::forget('coupon_total');
+        Session::forget('coupon_total1');
+        Session::forget('coupon_percentage');
+
 
 
 
@@ -153,11 +262,11 @@ class PaylinkPaymentController extends Controller
                 CURLOPT_POSTFIELDS => '{
                 "amount": ' . $order['pay_amount']  . ',
                 "callBackUrl": "https://www.example.com",
-                "clientEmail": "myclient@email.com",
-                "clientMobile": "0509200900",
-                "clientName": "Zaid Matooq",
-                "note": "This invoice is for VIP client.",
-                "orderNumber": "MERCHANT-ANY-UNIQUE-ORDER-NUMBER-12313123",
+                "clientEmail": "' . $order['customer_email'] . '",
+                "clientMobile": "' . $order['customer_phone'] . '",
+                "clientName": "' . $order['customer_name'] . '",
+                "note": "' . $order['order_note'] . '",
+                "orderNumber": "' . $order['order_number'] . '",
                 "products": [
                     {
                         "description": "Brown Hand bag leather for ladies",
