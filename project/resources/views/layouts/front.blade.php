@@ -610,6 +610,8 @@
 									Bank Account
 						            @elseif($data->title == 'الشروط والاحكام')
 									Terms And Conditions
+									@elseif($data->title == 'السجل التجاري')
+									Commercial Register
 									@else
                                     {{ $data->title }}
 									@endif
@@ -690,7 +692,7 @@
 				<div class="col-md-6 col-lg-3 payment-footer1">
 					<div class="footer-widget info-link-widget">
 						<h4 class="title" style="color: #143250;">
-								{{ $lang->lang772 }}
+						{{ $langg->lang772 }}
 						</h4> 
 						<div class="footer-payment ">
 							
