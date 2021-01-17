@@ -414,7 +414,8 @@ class PaylinkPaymentController extends Controller
                         return 'unsuccess -> amount>' . $getInvoice['amount'];
                     }
                 } else {
-                    return 'unsuccess -> orderStatus>' . $getInvoice['orderStatus'];
+                    return redirect()->back()->with('unsuccess', 'Payment Cancelled.');
+                    //return 'unsuccess -> orderStatus>' . $getInvoice['orderStatus'];
                 }
             } else {
                 return 'unsuccess -> paymentErrors> ' . $getInvoice['paymentErrors'][0]['errorCode'];
