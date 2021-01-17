@@ -385,6 +385,22 @@ class PaylinkPaymentController extends Controller
 
             $getInvoice = getInvoice($transactionNo, $GetToken);
 
+            if($product['payment_status'] == "Completed"){
+                if (Session::has('tempcart')) {
+                    $oldCart = Session::get('tempcart');
+                    $tempcart = new Cart($oldCart);
+                    //$order = Session::get('temporder');
+                    $order = $product;
+                } else {
+                    $tempcart = '';
+                    return redirect()->back();
+                }
+                
+                sleep(1);
+        
+                return view('front.success', compact('tempcart', 'order'));
+            }
+
 
             if ($getInvoice['paymentErrors'] == null) {
                 if ($getInvoice['orderStatus'] == 'Paid') {
@@ -393,7 +409,7 @@ class PaylinkPaymentController extends Controller
                         $product->transfer_amount = $getInvoice['amount'];
                         $product->adapter_name = $getInvoice['gatewayOrderRequest']['clientName'];
                         $product->payment_status =  "Completed";
-                        $product->transfer_date = date('YYYY:DD:MM');
+                        $product->transfer_date = date("F j, Y, g:i:s a");
                         $product->update();
                         if ($product) {
                             
