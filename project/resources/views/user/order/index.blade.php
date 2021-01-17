@@ -41,7 +41,9 @@
 																{{$order->totalQty}}
 														</td>
 														<td>
+														<div class="payment-status decline">
 														{{$order->payment_status == 'Pending' ? "$langg->unpaid2222":"$langg->paid00011"}}
+														</div>
 														</td>
 
                 										<td>
