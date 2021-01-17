@@ -94,7 +94,7 @@
                                                                         @if($order->method=="Stripe")
                                                                             {{$order->method}} : {{ $langg->lang295 }} <p>{{$order->charge_id}}</p>
                                                                         @endif
-                                                                        {{$order->method}} : {{ $langg->lang296 }} <p id="ttn">{{$order->txnid}}</p>
+                                                                        {{$order->method}} : {{ $langg->lang296 }} <p id="ttn">{{$order->transaction_id}}</p>
 
                                                                     @endif
                                                                 </div>
