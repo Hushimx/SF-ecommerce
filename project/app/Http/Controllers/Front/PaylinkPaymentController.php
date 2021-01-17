@@ -389,8 +389,11 @@ class PaylinkPaymentController extends Controller
             if ($getInvoice['paymentErrors'] == null) {
                 if ($getInvoice['orderStatus'] == 'Paid') {
                     if ($getInvoice['amount'] == $product->pay_amount) {
+                        $product->method = "Paylink";
+                        $product->transfer_amount = $getInvoice['amount'];
+                        $product->adapter_name = $getInvoice['clientName'];
                         $product->payment_status =  "Completed";
-                        $product->transfer_date =   date('YYYY:DD:MM');
+                        $product->transfer_date = date('YYYY:DD:MM');
                         $product->update();
                         if ($product) {
                             
