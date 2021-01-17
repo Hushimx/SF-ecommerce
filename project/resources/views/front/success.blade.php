@@ -32,8 +32,6 @@
 
 
 
-
-
 <section class="tempcart">
 
 @if(!empty($tempcart))

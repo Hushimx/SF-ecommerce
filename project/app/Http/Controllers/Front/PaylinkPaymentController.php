@@ -400,11 +400,14 @@ class PaylinkPaymentController extends Controller
                             if (Session::has('tempcart')) {
                                 $oldCart = Session::get('tempcart');
                                 $tempcart = new Cart($oldCart);
-                                $order = Session::get('temporder');
+                                //$order = Session::get('temporder');
+                                $order = $product;
                             } else {
                                 $tempcart = '';
                                 return redirect()->back();
                             }
+                            
+                            sleep(1);
                     
                             return view('front.success', compact('tempcart', 'order'));
 
