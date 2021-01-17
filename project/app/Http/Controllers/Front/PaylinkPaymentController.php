@@ -382,22 +382,18 @@ class PaylinkPaymentController extends Controller
         function setPiad($transactionNo, $orderNumber, $GetToken)
         {
             $product = Order::where('order_number', '=', $orderNumber)->where('transaction_id', '=', $transactionNo)->first();
-
+            if (Session::has('tempcart')) {
+                $oldCart = Session::get('tempcart');
+                $tempcart = new Cart($oldCart);
+                //$order = Session::get('temporder');
+                $order = $product;
+            } else {
+                $tempcart = '';
+                return redirect()->back();
+            }
             $getInvoice = getInvoice($transactionNo, $GetToken);
 
-            if($product['payment_status'] == "Completed"){
-                if (Session::has('tempcart')) {
-                    $oldCart = Session::get('tempcart');
-                    $tempcart = new Cart($oldCart);
-                    //$order = Session::get('temporder');
-                    $order = $product;
-                } else {
-                    $tempcart = '';
-                    return redirect()->back();
-                }
-                
-                sleep(1);
-        
+            if ($product['payment_status'] == "Completed") {
                 return view('front.success', compact('tempcart', 'order'));
             }
 
@@ -412,7 +408,7 @@ class PaylinkPaymentController extends Controller
                         $product->transfer_date = date("F j, Y, g:i a");
                         $product->update();
                         if ($product) {
-                            
+
                             if (Session::has('tempcart')) {
                                 $oldCart = Session::get('tempcart');
                                 $tempcart = new Cart($oldCart);
@@ -422,12 +418,10 @@ class PaylinkPaymentController extends Controller
                                 $tempcart = '';
                                 return redirect()->back();
                             }
-                            
+
                             sleep(1);
-                    
+
                             return view('front.success', compact('tempcart', 'order'));
-
-
                         } else {
                             return redirect()->back()->with('unsuccess', 'Payment Cancelled.');
                         }
@@ -436,11 +430,16 @@ class PaylinkPaymentController extends Controller
                         return 'unsuccess -> amount>' . $getInvoice['amount'];
                     }
                 } else {
-                    return redirect()->back()->with('unsuccess', 'Payment Cancelled.');
+                    $order['temp01'] = "1";
+                    return view('front.success', compact('tempcart', 'order'));
+                    //return redirect()->back()->with('unsuccess', 'Payment Cancelled.');
                     //return 'unsuccess -> orderStatus>' . $getInvoice['orderStatus'];
+
                 }
             } else {
-                return 'unsuccess -> paymentErrors> ' . $getInvoice['paymentErrors'][0]['errorCode'];
+                $order['paymentErrors'] = $getInvoice['paymentErrors'];
+                return view('front.success', compact('tempcart', 'order'));
+                //return 'unsuccess -> paymentErrors> ' . $getInvoice['paymentErrors'][0]['errorCode'];
                 /* [{"errorCode":"3D","errorTitle":"3D Secure Error - Invalid card information",
                     "errorMessage":"3D Secure Error - Invalid card information",
                     "errorTime":"2021-01-17T15:31:11.000+0000"}
@@ -455,7 +454,7 @@ class PaylinkPaymentController extends Controller
 
 
         return setPiad($request->transactionNo, $request->orderNumber,  $GetToken);
-       //  return getInvoice($request->transactionNo, $GetToken);
+        //  return getInvoice($request->transactionNo, $GetToken);
     }
 
     public function GetToken()

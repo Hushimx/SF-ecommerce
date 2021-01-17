@@ -30,8 +30,11 @@
 
 
 
-
-
+@if(empty($order->paymentErrors))
+ No Error 
+@else
+{{ $order->paymentErrors }}
+@endif
 <section class="tempcart">
 
 @if(!empty($tempcart))
