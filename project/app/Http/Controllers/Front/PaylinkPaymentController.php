@@ -387,27 +387,28 @@ class PaylinkPaymentController extends Controller
 
 
             if ($getInvoice['paymentErrors'] != null) {
-                if ($getInvoice['orderStatus'] = 'Paid') {
-                    if ($getInvoice['amount'] = $product->pay_amount) {
-                        updatedate($product);
-                        return "No paymentErrors, orderStatus = Paid, and amount = pay_amount " . $product->pay_amount;
+                if ($getInvoice['orderStatus'] == 'Paid') {
+                    if ($getInvoice['amount'] == $product->pay_amount) {
+                        $product->payment_status =  "Completed";
+                        $product->transfer_date =   date('YYYY:DD:MM');
+                        $product->update();
+                        if ($product) {
+                            return "ok, done";
+                        } else {
+                            return "Error";
+                        }
+                        // return "No paymentErrors, orderStatus = Paid, and amount = pay_amount " . $product->pay_amount;
+                    }else{
+                        return 'unsuccess -> '. $getInvoice['amount'];
                     }
+                }else{
+                    return 'unsuccess -> '. $getInvoice['orderStatus'];
                 }
             } else {
-                return redirect()->back()->with('unsuccess', $getInvoice['paymentErrors']);
+                return 'unsuccess -> '. $getInvoice['paymentErrors'];
             }
 
-            function updatedate($product)
-            {
-                $product->payment_status =  "Completed";
-                $product->transfer_date =   date('YYYY:DD:MM');
-                $product->update();
-                if ($product) {
-                    return "ok, done";
-                } else {
-                    return "Error";
-                }
-            }
+
         }
 
 
