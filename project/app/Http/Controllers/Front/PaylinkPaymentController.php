@@ -216,9 +216,9 @@ class PaylinkPaymentController extends Controller
                             return $response['id_token'];
                         }
                 */
-        function Addinv($token, $order, $success_url)
+        function Addinv($token, $order, $te, $success_url)
         {
-            global $te;
+            //global $te;
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'restpilot.paylink.sa/api/addInvoice',
@@ -253,7 +253,7 @@ class PaylinkPaymentController extends Controller
         }
         $GetToken = $this->GetToken();
 
-        $backcall = Addinv($GetToken, $order, $success_url);
+        $backcall = Addinv($GetToken, $order, $te, $success_url);
 
         if ($backcall['success'] == true) {
             if ($backcall['amount'] == $order['pay_amount']) {
@@ -374,29 +374,39 @@ class PaylinkPaymentController extends Controller
             ));
 
             $response = curl_exec($curl);
-
             curl_close($curl);
             $response = json_decode($response, true);
             return $response;
         }
 
-        function setPiad($transactionNo, $orderNumber)
+        function setPiad($transactionNo, $orderNumber, $GetToken)
         {
-
-
-
-
-
-
-
             $product = Order::where('order_number', '=', $orderNumber)->where('transaction_id', '=', $transactionNo)->first();
-            $product->payment_status =  "Completed";
-            $product->transfer_date =   date('YYYY:DD:MM');
-            $product->update();
-            if ($product) {
-                return "ok, done";
+
+            $getInvoice = getInvoice($transactionNo, $GetToken);
+
+
+            if ($getInvoice['paymentErrors'] != null) {
+                if ($getInvoice['orderStatus'] = 'Paid') {
+                    if ($getInvoice['amount'] = $product->pay_amount) {
+                        updatedate($product);
+                        return "No paymentErrors, orderStatus = Paid, and amount = pay_amount " . $product->pay_amount;
+                    }
+                }
             } else {
-                return "Error";
+                return redirect()->back()->with('unsuccess', $getInvoice['paymentErrors']);
+            }
+
+            function updatedate($product)
+            {
+                $product->payment_status =  "Completed";
+                $product->transfer_date =   date('YYYY:DD:MM');
+                $product->update();
+                if ($product) {
+                    return "ok, done";
+                } else {
+                    return "Error";
+                }
             }
         }
 
@@ -405,8 +415,8 @@ class PaylinkPaymentController extends Controller
 
 
 
-        //return setPiad($request->transactionNo, $request->orderNumber);
-        return getInvoice($request->transactionNo, $GetToken);
+        return setPiad($request->transactionNo, $request->orderNumber,  $GetToken);
+        // return getInvoice($request->transactionNo, $GetToken);
     }
 
     public function GetToken()
