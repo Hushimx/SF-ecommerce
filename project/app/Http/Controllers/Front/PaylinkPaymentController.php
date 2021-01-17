@@ -435,8 +435,8 @@ class PaylinkPaymentController extends Controller
 
 
 
-       // return setPiad($request->transactionNo, $request->orderNumber,  $GetToken);
-         return getInvoice($request->transactionNo, $GetToken);
+        return setPiad($request->transactionNo, $request->orderNumber,  $GetToken);
+       //  return getInvoice($request->transactionNo, $GetToken);
     }
 
     public function GetToken()
