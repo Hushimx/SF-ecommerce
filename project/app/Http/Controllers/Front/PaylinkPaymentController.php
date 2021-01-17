@@ -351,7 +351,21 @@ class PaylinkPaymentController extends Controller
     public function paysuccess(Request $request)
     {
 
+ 
 
-        return $request->transactionNo;
+        function setPiad($transactionNo, $orderNumber){
+
+            $product = Order::where('order_number','=',$orderNumber)->where('transaction_id','=',$transactionNo)->first();
+            $product->payment_status =  "Completed";
+            $product->transfer_date =   date('YYYY:DD:MM');
+            $product->update();
+            if($product){
+                return "ok, done";
+            }else{
+                return "Error";
+            }
+            
+        }
+        return setPiad($request->transactionNo,$request->orderNumber);
     }
 }
