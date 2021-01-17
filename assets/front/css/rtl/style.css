@@ -8465,6 +8465,22 @@ input[type=checkbox]:checked:disabled + label:before {
 /*-----------------------------
 ** User Panel Area start
 ------------------------------*/
+.payment-status{
+  color: #fff;
+  border-radius: 50px;
+  text-align:center;
+  display:inline-block;
+  padding: 1px 15px;
+  
+  }
+ .payment-status.decline{
+    background: red;
+    }
+  
+  .payment-status.completed{
+    background: green;
+    }
+  
 .user-profile-details .allproduct  .order-status{
   color: #fff;
   border-radius: 50px;
