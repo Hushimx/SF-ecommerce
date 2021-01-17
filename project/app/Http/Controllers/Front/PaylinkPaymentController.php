@@ -437,7 +437,7 @@ class PaylinkPaymentController extends Controller
 
                 }
             } else {
-                $order['paymentErrors'] = $getInvoice['paymentErrors'];
+                $order['paymentErrors'] = $getInvoice['paymentErrors'][0];
                 return view('front.success', compact('tempcart', 'order'));
                 //return 'unsuccess -> paymentErrors> ' . $getInvoice['paymentErrors'][0]['errorCode'];
                 /* [{"errorCode":"3D","errorTitle":"3D Secure Error - Invalid card information",
