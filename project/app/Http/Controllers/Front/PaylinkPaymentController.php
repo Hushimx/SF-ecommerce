@@ -88,7 +88,7 @@ class PaylinkPaymentController extends Controller
             //This secret key and must be saved in a secure place and must not be exposed outside the server side of the merchant system.
             // Secret key is given by Paylink. If you need the SECRET KEY, send request for Merchant API account to email info@paylink.sa
         );
-        //$success_url = action('Front\PaylinkPaymentController@payreturn');
+        $success_url = action('Front\PaylinkPaymentController@paysuccess');
         $item_name = $settings->title . " Order";
         $item_amount = $request->total / $curr->value;
         $item_number = str_random(4) . time();
@@ -105,7 +105,7 @@ class PaylinkPaymentController extends Controller
         $order['totalQty'] = $request->totalQty;
         // $order['pay_amount'] = round($item_amount / $curr->value, 2)  + $request->shipping_cost + $request->packing_cost;
 
-        if ( $curr->sign == "S.R") {
+        if ($curr->sign == "S.R") {
             $order['pay_amount'] = $request->total;
         } elseif ($curr->sign  == "$") {
             $order['pay_amount'] = $request->total * 3.75;
@@ -147,7 +147,7 @@ class PaylinkPaymentController extends Controller
         $order['adapter_name'] = $request->adapter_name;
         $order['transfer_amount'] = $request->transfer_amount;
         $order['transfer_date'] = $request->transfer_date;
-        $order['transaction_id'] = $request->transaction_id;
+        // $order['transaction_id'] = $request->transaction_id;
         if (Session::has('affilate')) {
             $val = $request->total / 100;
             $sub = $val * $settings->affilate_charge;
@@ -157,73 +157,33 @@ class PaylinkPaymentController extends Controller
             $order['affilate_user'] = $user->name;
             $order['affilate_charge'] = $sub;
         }
-        $order->save();
+        //$order->save();
 
 
-        $track = new OrderTrack;
-        $track->title = 'Pending';
-        $track->text = 'You have successfully placed your order.';
-        $track->order_id = $order->id;
-        $track->save();
 
-        if ($request->coupon_id != "") {
-            $coupon = Coupon::findOrFail($request->coupon_id);
-            $coupon->used++;
-            if ($coupon->times != null) {
-                $i = (int)$coupon->times;
-                $i--;
-                $coupon->times = (string)$i;
-            }
-            $coupon->update();
+        //$track->save();
+
+
+        $ite = 0;
+        foreach ($cart->items as $key => $prod) {
+            $te[$ite]['description'] = "";
+            $te[$ite]['imageSrc'] = "http://localhost/SF-ecommerce/assets/images/products/".$prod['item']['photo'];
+            $te[$ite]['price'] = $prod['item']['price'];
+            $te[$ite]['qty'] = $prod['qty'];
+            $te[$ite]['title'] = $prod['item']['name'];
+            $ite++;
         }
-
-        foreach ($cart->items as $prod) {
-            $x = (string)$prod['stock'];
-            if ($x != null) {
-                $product = Product::findOrFail($prod['item']['id']);
-                $product->stock =  $prod['stock'];
-                $product->update();
-            }
-        }
-
-        $notf = null;
-
-        foreach ($cart->items as $prod) {
-            if ($prod['item']['user_id'] != 0) {
-                $vorder =  new VendorOrder;
-                $vorder->order_id = $order->id;
-                $vorder->user_id = $prod['item']['user_id'];
-                $notf[] = $prod['item']['user_id'];
-                $vorder->qty = $prod['qty'];
-                $vorder->price = $prod['price'];
-                $vorder->order_number = $order->order_number;
-                $vorder->save();
-            }
-        }
-
-
-        if (!empty($notf)) {
-            $users = array_unique($notf);
-            foreach ($users as $user) {
-                $notification = new UserNotification;
-                $notification->user_id = $user;
-                $notification->order_number = $order->order_number;
-                $notification->save();
-            }
-        }
-
-        Session::put('temporder', $order);
-        Session::put('tempcart', $cart);
-
-        Session::forget('cart');
-        Session::forget('already');
-        Session::forget('coupon');
-        Session::forget('coupon_total');
-        Session::forget('coupon_total1');
-        Session::forget('coupon_percentage');
-
-
-
+                /*
+                [
+                    {
+                        "description": "Brown Hand bag leather for ladies",
+                        "imageSrc": "http://merchantwebsite.com/img/img1.jpg",
+                        "price": 150,
+                        "qty": 1,
+                        "title": "Hand bag"
+                    }
+                ]
+                */
 
         function GetToken($e)
         {
@@ -253,8 +213,9 @@ class PaylinkPaymentController extends Controller
 
 
 
-        function Addinv($token, $order)
+        function Addinv($token, $order, $success_url)
         {
+            global $te;
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'restpilot.paylink.sa/api/addInvoice',
@@ -267,21 +228,13 @@ class PaylinkPaymentController extends Controller
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => '{
                 "amount": ' . $order['pay_amount']  . ',
-                "callBackUrl": "https://www.example.com",
+                "callBackUrl": "' . $success_url . '",
                 "clientEmail": "' . $order['customer_email'] . '",
                 "clientMobile": "' . $order['customer_phone'] . '",
                 "clientName": "' . $order['customer_name'] . '",
                 "note": "' . $order['order_note'] . '",
                 "orderNumber": "' . $order['order_number'] . '",
-                "products": [
-                    {
-                        "description": "Brown Hand bag leather for ladies",
-                        "imageSrc": "http://merchantwebsite.com/img/img1.jpg",
-                        "price": 150,
-                        "qty": 1,
-                        "title": "Hand bag"
-                    }
-                ]
+                "products": '.json_encode($te, true).'
             }',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . $token . '',
@@ -297,12 +250,108 @@ class PaylinkPaymentController extends Controller
         }
 
 
-        $backcall = Addinv(GetToken($settingV), $order);
-        return redirect($backcall['url']);
+        $backcall = Addinv(GetToken($settingV), $order, $success_url);
+        
+        if ($backcall['success'] == true) {
+            if ($backcall['amount'] == $order['pay_amount']) {
+                if ($backcall['orderStatus'] == "CREATED") {
+                    if ($backcall['paymentErrors'] == null) {
+
+
+                        $order['transaction_id'] = $backcall['transactionNo'];
+
+                        $order->save();
+
+
+                        $track = new OrderTrack;
+                        $track->title = 'Pending';
+                        $track->text = 'You have successfully placed your order.';
+                        $track->order_id = $order->id;
+                        $track->save();
+
+                        if ($request->coupon_id != "") {
+                            $coupon = Coupon::findOrFail($request->coupon_id);
+                            $coupon->used++;
+                            if ($coupon->times != null) {
+                                $i = (int)$coupon->times;
+                                $i--;
+                                $coupon->times = (string)$i;
+                            }
+                            $coupon->update();
+                        }
+
+
+
+
+
+                        foreach ($cart->items as $prod) {
+                            $x = (string)$prod['stock'];
+                            if ($x != null) {
+                                $product = Product::findOrFail($prod['item']['id']);
+                                $product->stock =  $prod['stock'];
+                                $product->update();
+                            }
+                        }
+
+                        $notf = null;
+
+                        foreach ($cart->items as $prod) {
+                            if ($prod['item']['user_id'] != 0) {
+                                $vorder =  new VendorOrder;
+                                $vorder->order_id = $order->id;
+                                $vorder->user_id = $prod['item']['user_id'];
+                                $notf[] = $prod['item']['user_id'];
+                                $vorder->qty = $prod['qty'];
+                                $vorder->price = $prod['price'];
+                                $vorder->order_number = $order->order_number;
+                                $vorder->save();
+                            }
+                        }
+
+
+                        if (!empty($notf)) {
+                            $users = array_unique($notf);
+                            foreach ($users as $user) {
+                                $notification = new UserNotification;
+                                $notification->user_id = $user;
+                                $notification->order_number = $order->order_number;
+                                $notification->save();
+                            }
+                        }
+
+
+
+
+
+                        Session::put('temporder', $order);
+                        Session::put('tempcart', $cart);
+
+
+
+                        Session::forget('cart');
+                        Session::forget('already');
+                        Session::forget('coupon');
+                        Session::forget('coupon_total');
+                        Session::forget('coupon_total1');
+                        Session::forget('coupon_percentage');
+
+
+
+
+
+                        return redirect($backcall['url']);
+                    }
+                }
+            }
+        }
+
     }
 
 
-    public function payreturn()
+    public function paysuccess(Request $request)
     {
+
+
+        return $request->transactionNo;
     }
 }
