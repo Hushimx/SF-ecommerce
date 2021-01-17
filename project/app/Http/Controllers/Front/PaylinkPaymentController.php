@@ -22,8 +22,10 @@ use Illuminate\Support\Facades\Session;
 
 class PaylinkPaymentController extends Controller
 {
+
     public function store(Request $request)
     {
+
 
         if ($request->pass_check) {
             $users = User::where('email', '=', $request->personal_email)->get();
@@ -81,13 +83,7 @@ class PaylinkPaymentController extends Controller
         $settings = Generalsetting::findOrFail(1);
         $order = new Order;
         //$paypal_email = $settings->paypal_business;
-        $settingV = array(
-            "apiId" => "APP_ID_1123453311", // Data model to send to login using Merchant API account
-            "persistToken" => false, //This is boolean value. if set to true, then the returned token valid for 30 hours. Otherwise, the returned token will be valid for 30 minutes.
-            "secretKey" => "0662abb5-13c7-38ab-cd12-236e58f43766"
-            //This secret key and must be saved in a secure place and must not be exposed outside the server side of the merchant system.
-            // Secret key is given by Paylink. If you need the SECRET KEY, send request for Merchant API account to email info@paylink.sa
-        );
+
         $success_url = action('Front\PaylinkPaymentController@paysuccess');
         $item_name = $settings->title . " Order";
         $item_amount = $request->total / $curr->value;
@@ -167,13 +163,13 @@ class PaylinkPaymentController extends Controller
         $ite = 0;
         foreach ($cart->items as $key => $prod) {
             $te[$ite]['description'] = "";
-            $te[$ite]['imageSrc'] = "http://localhost/SF-ecommerce/assets/images/products/".$prod['item']['photo'];
+            $te[$ite]['imageSrc'] = "http://localhost/SF-ecommerce/assets/images/products/" . $prod['item']['photo'];
             $te[$ite]['price'] = $prod['item']['price'];
             $te[$ite]['qty'] = $prod['qty'];
             $te[$ite]['title'] = $prod['item']['name'];
             $ite++;
         }
-                /*
+        /*
                 [
                     {
                         "description": "Brown Hand bag leather for ladies",
@@ -185,34 +181,41 @@ class PaylinkPaymentController extends Controller
                 ]
                 */
 
-        function GetToken($e)
-        {
-            //global $setting;
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'restpilot.paylink.sa/api/auth',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => json_encode($e),
-                CURLOPT_HTTPHEADER => array(
-                    'Content-Type: application/json'
-                ),
-            ));
+        /*
+                        function GetToken()
+                        {
 
-            $response = curl_exec($curl);
+                            $settingV = array(
+                                "apiId" => "APP_ID_1123453311", // Data model to send to login using Merchant API account
+                                "persistToken" => false, //This is boolean value. if set to true, then the returned token valid for 30 hours. Otherwise, the returned token will be valid for 30 minutes.
+                                "secretKey" => "0662abb5-13c7-38ab-cd12-236e58f43766"
+                                //This secret key and must be saved in a secure place and must not be exposed outside the server side of the merchant system.
+                                // Secret key is given by Paylink. If you need the SECRET KEY, send request for Merchant API account to email info@paylink.sa
+                            );
+                            //global $setting;
+                            $curl = curl_init();
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => 'restpilot.paylink.sa/api/auth',
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_POSTFIELDS => json_encode($settingV),
+                                CURLOPT_HTTPHEADER => array(
+                                    'Content-Type: application/json'
+                                ),
+                            ));
 
-            curl_close($curl);
-            $response = json_decode($response, true);
-            return $response['id_token'];
-        }
+                            $response = curl_exec($curl);
 
-
-
+                            curl_close($curl);
+                            $response = json_decode($response, true);
+                            return $response['id_token'];
+                        }
+                */
         function Addinv($token, $order, $success_url)
         {
             global $te;
@@ -234,7 +237,7 @@ class PaylinkPaymentController extends Controller
                 "clientName": "' . $order['customer_name'] . '",
                 "note": "' . $order['order_note'] . '",
                 "orderNumber": "' . $order['order_number'] . '",
-                "products": '.json_encode($te, true).'
+                "products": ' . json_encode($te, true) . '
             }',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . $token . '',
@@ -248,10 +251,10 @@ class PaylinkPaymentController extends Controller
             $response = json_decode($response, true);
             return $response;
         }
+        $GetToken = $this->GetToken();
 
+        $backcall = Addinv($GetToken, $order, $success_url);
 
-        $backcall = Addinv(GetToken($settingV), $order, $success_url);
-        
         if ($backcall['success'] == true) {
             if ($backcall['amount'] == $order['pay_amount']) {
                 if ($backcall['orderStatus'] == "CREATED") {
@@ -344,28 +347,99 @@ class PaylinkPaymentController extends Controller
                 }
             }
         }
-
     }
-
 
     public function paysuccess(Request $request)
     {
+        $GetToken = $this->GetToken();
 
- 
+        function getInvoice($e, $d)
+        {
 
-        function setPiad($transactionNo, $orderNumber){
+            $curl = curl_init();
 
-            $product = Order::where('order_number','=',$orderNumber)->where('transaction_id','=',$transactionNo)->first();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'restpilot.paylink.sa/api/getInvoice/' . $e,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $d . '',
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            $response = json_decode($response, true);
+            return $response;
+        }
+
+        function setPiad($transactionNo, $orderNumber)
+        {
+
+
+
+
+
+
+
+            $product = Order::where('order_number', '=', $orderNumber)->where('transaction_id', '=', $transactionNo)->first();
             $product->payment_status =  "Completed";
             $product->transfer_date =   date('YYYY:DD:MM');
             $product->update();
-            if($product){
+            if ($product) {
                 return "ok, done";
-            }else{
+            } else {
                 return "Error";
             }
-            
         }
-        return setPiad($request->transactionNo,$request->orderNumber);
+
+
+
+
+
+
+        //return setPiad($request->transactionNo, $request->orderNumber);
+        return getInvoice($request->transactionNo, $GetToken);
+    }
+
+    public function GetToken()
+    {
+
+        $settingV = array(
+            "apiId" => "APP_ID_1123453311", // Data model to send to login using Merchant API account
+            "persistToken" => false, //This is boolean value. if set to true, then the returned token valid for 30 hours. Otherwise, the returned token will be valid for 30 minutes.
+            "secretKey" => "0662abb5-13c7-38ab-cd12-236e58f43766"
+            //This secret key and must be saved in a secure place and must not be exposed outside the server side of the merchant system.
+            // Secret key is given by Paylink. If you need the SECRET KEY, send request for Merchant API account to email info@paylink.sa
+        );
+        //global $setting;
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'restpilot.paylink.sa/api/auth',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($settingV),
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $response = json_decode($response, true);
+        return $response['id_token'];
     }
 }
