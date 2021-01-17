@@ -386,29 +386,44 @@ class PaylinkPaymentController extends Controller
             $getInvoice = getInvoice($transactionNo, $GetToken);
 
 
-            if ($getInvoice['paymentErrors'] != null) {
+            if ($getInvoice['paymentErrors'] == null) {
                 if ($getInvoice['orderStatus'] == 'Paid') {
                     if ($getInvoice['amount'] == $product->pay_amount) {
                         $product->payment_status =  "Completed";
                         $product->transfer_date =   date('YYYY:DD:MM');
                         $product->update();
                         if ($product) {
-                            return "ok, done";
+                            
+                            if (Session::has('tempcart')) {
+                                $oldCart = Session::get('tempcart');
+                                $tempcart = new Cart($oldCart);
+                                $order = Session::get('temporder');
+                            } else {
+                                $tempcart = '';
+                                return redirect()->back();
+                            }
+                    
+                            return view('front.success', compact('tempcart', 'order'));
+
+
                         } else {
-                            return "Error";
+                            return redirect()->back()->with('unsuccess', 'Payment Cancelled.');
                         }
                         // return "No paymentErrors, orderStatus = Paid, and amount = pay_amount " . $product->pay_amount;
-                    }else{
-                        return 'unsuccess -> '. $getInvoice['amount'];
+                    } else {
+                        return 'unsuccess -> amount>' . $getInvoice['amount'];
                     }
-                }else{
-                    return 'unsuccess -> '. $getInvoice['orderStatus'];
+                } else {
+                    return 'unsuccess -> orderStatus>' . $getInvoice['orderStatus'];
                 }
             } else {
-                return 'unsuccess -> '. $getInvoice['paymentErrors'];
+                return 'unsuccess -> paymentErrors> ' . $getInvoice['paymentErrors'][0]['errorCode'];
+                /* [{"errorCode":"3D","errorTitle":"3D Secure Error - Invalid card information",
+                    "errorMessage":"3D Secure Error - Invalid card information",
+                    "errorTime":"2021-01-17T15:31:11.000+0000"}
+                    ]}
+*/
             }
-
-
         }
 
 
@@ -416,8 +431,8 @@ class PaylinkPaymentController extends Controller
 
 
 
-        return setPiad($request->transactionNo, $request->orderNumber,  $GetToken);
-        // return getInvoice($request->transactionNo, $GetToken);
+       // return setPiad($request->transactionNo, $request->orderNumber,  $GetToken);
+         return getInvoice($request->transactionNo, $GetToken);
     }
 
     public function GetToken()
