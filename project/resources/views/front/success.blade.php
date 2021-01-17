@@ -33,7 +33,7 @@
 @if(empty($order->paymentErrors))
  No Error 
 @else
-{{ $order->paymentErrors->errorMessage }}
+{{ $order->paymentErrors['errorMessage'] }}
 @endif
 <section class="tempcart">
 
