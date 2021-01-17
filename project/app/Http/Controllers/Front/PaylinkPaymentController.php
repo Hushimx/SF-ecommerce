@@ -409,7 +409,7 @@ class PaylinkPaymentController extends Controller
                         $product->transfer_amount = $getInvoice['amount'];
                         $product->adapter_name = $getInvoice['gatewayOrderRequest']['clientName'];
                         $product->payment_status =  "Completed";
-                        $product->transfer_date = date("F j, Y, g:i:s a");
+                        $product->transfer_date = date("F j, Y, g:i a");
                         $product->update();
                         if ($product) {
                             
