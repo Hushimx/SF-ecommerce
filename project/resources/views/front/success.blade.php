@@ -213,15 +213,23 @@
                 <div class="content-box section-padding add-product-1">
                     <div class="top-area">
                         <div class="content">
-                        <i class="fas fa-exclamation-triangle text-danger" style="font-size: 165px;margin-bottom: 27px;"></i>
+                            <i class="fas fa-exclamation-triangle text-danger" style="font-size: 165px;margin-bottom: 27px;"></i>
                             <h4 class="heading text-danger">
                                 لقد فشلت عملية الشراء
                             </h4>
                             <p class="text">
                                 {{ $langg->order_text }}
                             </p>
-                            <a href="{{ route('front.index') }}" class="link">{{ $langg->lang170 }}</a><br>
-                            <button type="button" class="submit-btn">ادفع الأن</button>
+
+                            <br>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-6">
+                                    <a href="{{ route('front.index') }}" class="mybtn2">{{ $langg->lang170 }}</a><br>
+                                </div>
+                                <div class="col-lg-6">
+                                    <a href="https://pilot.paylink.sa/pay/info/{{ $order->transaction_id }}" class="mybtn2">محاولة مرة اخرى</a>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
