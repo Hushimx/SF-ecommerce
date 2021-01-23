@@ -1,5 +1,7 @@
 <?php
 
+echo "test";
+
 // ************************************ ADMIN SECTION **********************************************
 
 Route::prefix('admin')->group(function() {
