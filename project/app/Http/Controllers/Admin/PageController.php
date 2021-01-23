@@ -132,6 +132,7 @@ class PageController extends Controller
             $input['meta_tag'] = null;
             $input['meta_description'] = null;         
          } 
+         $data->details2 = $request->details2;
         $data->update($input);
         //--- Logic Section Ends
 

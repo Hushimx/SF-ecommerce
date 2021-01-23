@@ -47,6 +47,7 @@
                           </div>
                           <div class="col-lg-7">
                               <textarea class="nic-edit-p" name="details" placeholder="{{ __('Description') }}">{{ $data->details }}</textarea> 
+                              <textarea class="nic-edit-p" name="details2" placeholder="{{ __('Description') }}">{{ $data->details2 }}</textarea> 
                                 <div class="checkbox-wrapper">
                                   <input type="checkbox" name="secheck" class="checkclick" id="allowProductSEO" {{ ($data->meta_tag != null || strip_tags($data->meta_description) != null) ? 'checked':'' }}>
                                   <label for="allowProductSEO">{{ __('Allow Page SEO') }}</label>

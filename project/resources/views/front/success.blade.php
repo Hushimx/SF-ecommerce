@@ -215,10 +215,10 @@
                         <div class="content">
                             <i class="fas fa-exclamation-triangle text-danger" style="font-size: 165px;margin-bottom: 27px;"></i>
                             <h4 class="heading text-danger">
-                                لقد فشلت عملية الشراء
+                            {{ $langg->order_title2 }}
                             </h4>
                             <p class="text">
-                                {{ $langg->order_text }}
+                                {{ $langg->order_text2 }}
                             </p>
 
                             <br>

@@ -3585,7 +3585,33 @@
                               </div>
                             </div>
 
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="left-area">
+                                  <h4 class="heading">Order UnSuccess Title *</h4>
+                                  <p class="sub-heading">(In Any Language)</p>
+                                </div>
+                              </div>
+                              <div class="col-lg-7">
+                                  <div class="tawk-area">
+                                    <textarea  name="order_title2" required="">{{ $lang->order_title2 }}</textarea>
+                                  </div>
+                              </div>
+                            </div>
 
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="left-area">
+                                  <h4 class="heading">Order UnSuccess Text *</h4>
+                                  <p class="sub-heading">(In Any Language)</p>
+                                </div>
+                              </div>
+                              <div class="col-lg-7">
+                                  <div class="tawk-area">
+                                    <textarea  name="order_text2" required="">{{ $lang->order_text2 }}</textarea>
+                                  </div>
+                              </div>
+                            </div>
 
 
                           <div class="row">
