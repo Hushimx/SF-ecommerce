@@ -221,7 +221,7 @@ class PaylinkPaymentController extends Controller
             //global $te;
             $curl = curl_init();
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'restpilot.paylink.sa/api/addInvoice',
+                CURLOPT_URL => 'restapi.paylink.sa/api/addInvoice',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -359,7 +359,7 @@ class PaylinkPaymentController extends Controller
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'restpilot.paylink.sa/api/getInvoice/' . $e,
+                CURLOPT_URL => 'restapi.paylink.sa/api/getInvoice/' . $e,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -461,16 +461,16 @@ class PaylinkPaymentController extends Controller
     {
 
         $settingV = array(
-            "apiId" => "APP_ID_1123453311", // Data model to send to login using Merchant API account
+            "apiId" => "APP_ID_1610649563", // Data model to send to login using Merchant API account
             "persistToken" => false, //This is boolean value. if set to true, then the returned token valid for 30 hours. Otherwise, the returned token will be valid for 30 minutes.
-            "secretKey" => "0662abb5-13c7-38ab-cd12-236e58f43766"
+            "secretKey" => "742f607b-7c7c-3ce2-81ce-2ada8a66c4cb"
             //This secret key and must be saved in a secure place and must not be exposed outside the server side of the merchant system.
             // Secret key is given by Paylink. If you need the SECRET KEY, send request for Merchant API account to email info@paylink.sa
         );
         //global $setting;
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'restpilot.paylink.sa/api/auth',
+            CURLOPT_URL => 'restapi.paylink.sa/api/auth',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
