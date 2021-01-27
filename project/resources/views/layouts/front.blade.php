@@ -219,7 +219,7 @@
 	<!-- Top Header Area End -->
 
 	<!-- Logo Header Area Start -->
-	<section class="logo-header">
+	<section class="logo-header navdrop">
 		<div class="container">
 			<div class="row ">
 				<div class="col-lg-3 col-sm-6 col-6 remove-padding">
