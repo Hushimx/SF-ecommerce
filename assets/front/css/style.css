@@ -893,7 +893,7 @@ Logo Header Area Start
     font-size: 14px;
     color: #333;
     cursor: pointer;
-    height: 105%;
+    height: 100%;
     background: #35b5ab;
     width: 50px;
     color: #fff;
@@ -2683,8 +2683,8 @@ nav button {
 }
 
 .footer .fotter-social-links ul li a {
-    font-size: 14px;
-    width: 38px;
+    font-size: 25px;
+    width: 40px;
     height: 38px;
     display: inline-block;
     border-radius: 50%;
@@ -7048,7 +7048,7 @@ Faq Page Start
 }
 
 .user-dashbord .user-profile-info-area .links li {
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.342);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .user-dashbord .user-profile-info-area .links li:last-child {
@@ -9218,17 +9218,22 @@ input.form-control.card-elements {
 
 /***** CSS Magic to Highlight Stars on Hover *****/
 .rating>input:checked~label,
+
 /* show gold star when clicked */
 .rating:not(:checked)>label:hover,
+
 /* hover current star */
 .rating:not(:checked)>label:hover~label {
     color: #FFD700;
 }
+
 /* hover previous stars in list */
 .rating>input:checked+label:hover,
+
 /* hover current star when changing rating */
 .rating>input:checked~label:hover,
 .rating>label:hover~input:checked~label,
+
 /* lighten current selection */
 .rating>input:checked~label:hover~label {
     color: #FFED85;

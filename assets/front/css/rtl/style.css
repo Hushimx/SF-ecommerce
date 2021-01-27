@@ -2715,8 +2715,8 @@ nav button {
 }
 
 .footer .fotter-social-links ul li a {
-    font-size: 14px;
-    width: 38px;
+    font-size: 25px;
+    width: 40px;
     height: 38px;
     display: inline-block;
     border-radius: 50%;
@@ -7120,7 +7120,7 @@ Faq Page Start
 }
 
 .user-dashbord .user-profile-info-area .links li {
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.342);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .user-dashbord .user-profile-info-area .links li:last-child {

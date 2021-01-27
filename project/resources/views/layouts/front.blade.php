@@ -573,7 +573,7 @@
                                       @if(App\Models\Socialsetting::find(1)->l_status == 1)
                                       <li>
                                         <a href="{{ App\Models\Socialsetting::find(1)->linkedin }}" class="linkedin" target="_blank">
-                                            <i class="fab fa-linkedin-in"></i>
+                                            <i class="fab fa-instagram"></i>
                                         </a>
                                       </li>
                                       @endif
