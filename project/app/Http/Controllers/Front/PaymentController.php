@@ -253,7 +253,7 @@ class PaymentController extends Controller
         Session::forget('coupon_total1');
         Session::forget('coupon_percentage');
 
-        return redirect('https://www.paypal.com/cgi-bin/webscr' . $querystring);
+        return redirect('https://www.sandbox.paypal.com/cgi-bin/webscr' . $querystring);
         //header('location:https://www.paypal.com/cgi-bin/webscr'.$querystring);
 
     }
