@@ -19,6 +19,7 @@ use Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Classes\WockAPI;
 
 class PaylinkPaymentController extends Controller
 {
@@ -406,8 +407,61 @@ class PaylinkPaymentController extends Controller
                         $product->adapter_name = $getInvoice['gatewayOrderRequest']['clientName'];
                         $product->payment_status =  "Completed";
                         $product->transfer_date = date("F j, Y, g:i a");
+
+                        // SET WOCK Licence
+                        $wock = new WockAPI();
+                        $product_wock_request_id = [];
+                        $product_wock_serial_txt = [];
+                        $product_wock_serials = [];
+                        foreach($tempcart->items as $k=>$item){
+                            $pct = Product::where(['id' => $k,'wock_product' => '1'])->firstOrFail();
+                            if($pct){
+                                if($item["price"]>$pct->wock_product_price){
+                                    $response_bp = $wock->buyProduct($pct->wock_product_id, $item["qty"], $pct->wock_product_price);
+                                    if($response_bp["code"]=="200"){
+                                        $product_wock_request_id[] = $response_bp["body"]["request_id"];
+                                        $response_gr = $wock->getRequest($response_bp["body"]["request_id"]);
+                                        if($response_gr["code"]=="200"){
+                                            $serials = [];
+                                            $serial_txt=false;
+                                            $serial_txt_id=null;
+                                            foreach($response_gr["body"]["products"][0]["serials"] as $k => $srs){
+                                                foreach($srs as $serial){
+                                                    if($serial["mimetype"]=="text/plain"){
+                                                        $serial_txt=true;
+                                                        $serial_txt_id=$k;
+                                                        break;
+                                                    }
+                                                }
+                                                if($serial_txt)
+                                                    break;
+                                            }
+                                            $k=0;
+                                            if($serial_txt)
+                                            {
+                                                $k = $serial_txt_id;
+                                                $product_wock_serial_txt[] = 1;
+                                            }
+                                            foreach($response_gr["body"]["products"][0]["serials"][$k] as $serial){
+                                                $serials[] = $serial["code"];
+                                            }
+                                            $product_wock_serials[] = join($serials, "$0^0$");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if($product_wock_request_id)
+                            $product->wock_request_id = join($product_wock_request_id,",");
+                        if($product_wock_serial_txt)
+                            $product->wock_serial_txt = join($product_wock_serial_txt,",");
+                        if($product_wock_serials)
+                            $product->wock_serials = join($product_wock_serials,",");
+                        // END WOCK
+                        
                         $product->update();
                         if ($product) {
+                            
 
                             if (Session::has('tempcart')) {
                                 $oldCart = Session::get('tempcart');

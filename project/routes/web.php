@@ -1,6 +1,13 @@
 <?php
 
 
+// ************************************ WOCK SECTION **********************************************
+Route::prefix('cron')->group(function() {
+  Route::get('/update_products_quantities', 'WockController@updateProductsQuantities')->name('update-products-quantities');
+});
+// ************************************ END WOCK SECTION **********************************************
+
+
 // ************************************ ADMIN SECTION **********************************************
 
 Route::prefix('admin')->group(function() {

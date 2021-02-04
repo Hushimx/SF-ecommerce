@@ -513,14 +513,14 @@
 									</div>
 								</div>
 								<div class="col-lg-7">
-									<select id="wockAPI_check" name="wockAPI_check">
+									<select onchange="wockChange()" id="wock_product" name="wock_product">
 										<option value="0" {{ $data->wockAPI == 0 ? 'selected':'' }}>False</option>
 										<option value="1" {{ $data->wockAPI == 1 ? 'selected':'' }}>True</option>
 									</select>
 								</div>
 							</div>
 
-							<div class="row">
+							<div id="wock_product_id_container" style="display:none" class="row">
 								<div class="col-lg-4">
 									<div class="left-area">
 										<h4 class="heading">Product ID* </h4>
@@ -528,7 +528,7 @@
 									</div>
 								</div>
 								<div class="col-lg-7">
-									<input type="text" class="input-field" placeholder="123" name="name" required="" value="{{ $data->wockAPIid }}">
+									<input type="text" class="input-field" placeholder="Ex: 123" name="wock_product_id" id="wock_product_id" value="{{ $data->wockAPIid }}">
 								</div>
 							</div>
 
@@ -733,6 +733,18 @@
 		});
 
 	});
+
+	function wockChange(){
+		if($("#wock_product").val()=="1"){
+			$("#wock_product_id").attr("required",true);
+			$("#wock_product_id_container").show();
+		}
+		else
+		{
+			$("#wock_product_id").removeAttr("required");
+			$("#wock_product_id_container").hide();
+		}
+	}
 
 
 	$('.ok').on('click', function() {

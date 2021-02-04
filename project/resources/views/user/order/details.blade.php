@@ -176,7 +176,12 @@
                                 <tr>
                                     <td>{{ $product['item']['id'] }}</td>
                                     <td>
-                                        <input type="hidden" value="{{ $product['license'] }}"> @if($product['item']['user_id'] != 0) @php $user = App\Models\User::find($product['item']['user_id']); @endphp @if(isset($user))
+                                        @if($order->wock_serials)
+                                            <input type="hidden" value="{{ $order->wock_serials }}">
+                                        @else
+                                            <input type="hidden" value="{{ $product['license'] }}">
+                                        @endif
+                                        @if($product['item']['user_id'] != 0) @php $user = App\Models\User::find($product['item']['user_id']); @endphp @if(isset($user))
                                         <a target="_blank" href="{{ route('front.product', $product['item']['slug']) }}">{{strlen($product['item']['name']) > 30 ? substr($product['item']['name'],0,30).'...' : $product['item']['name']}}</a> @else
                                         <a target="_blank" href="{{ route('front.product', $product['item']['slug']) }}">
                                                     {{strlen($product['item']['name']) > 30 ? substr($product['item']['name'],0,30).'...' : $product['item']['name']}}
