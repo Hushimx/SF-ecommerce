@@ -14,9 +14,9 @@ class AddWockRequestIdToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->text('wock_request_id')->nullable();
-            $table->text('wock_serials')->nullable();
-            $table->text('wock_serial_txt')->nullable();
+            $table->json('wock_request_id')->nullable();
+            $table->json('wock_serials')->nullable();
+            $table->json('wock_serial_txt')->nullable();
         });
     }
 

@@ -172,15 +172,44 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $ind=-1; ?>
                                 @foreach($cart->items as $product)
+                                <?php $ind++; ?>
                                 <tr>
                                     <td>{{ $product['item']['id'] }}</td>
                                     <td>
-                                        @if($order->wock_serials)
-                                            <input type="hidden" value="{{ $order->wock_serials }}">
-                                        @else
-                                            <input type="hidden" value="{{ $product['license'] }}">
-                                        @endif
+                                        <div style="display:none" class="serials">
+                                            <?php $i=1; ?>
+                                            @for($j=0; $j<=$product['qty']-1; $j++)
+                                                @if(isset($order->wock_serials[$ind]))
+                                                    {{ $langg->lang320 }} 
+                                                    @if($product['qty']>1)
+                                                        {{$i}} 
+                                                        <?php $i++; ?>
+                                                    @endif 
+                                                    :
+                                                    @for($k=0; $k<count($order->wock_serials[$ind]); $k++)
+                                                        @if($order->wock_serial_txt[$ind][$k]==1)
+                                                            <b>{{ $order->wock_serials[$ind][$k] }}</b>
+                                                            @if($k<count($order->wock_serials[$ind])-1)
+                                                            ,
+                                                            @endif
+                                                        @else
+                                                            <img width="180px" src="data:image/png;base64, {{ $order->wock_serials[$ind][$k] }}" alt="{{ $langg->lang320 }}  {{$i}}"/>
+                                                        @endif
+                                                    @endfor
+
+                                                    @if($j<$product['qty']-1)
+                                                        <br/>
+                                                    @endif
+                                                @else
+                                                    {{ $langg->lang320 }} : {{ $product['license'] }}
+                                                @endif
+                                                @if($j<$product['qty']-1)
+                                                    <?php $ind++; ?>
+                                                @endif
+                                            @endfor
+                                        </div>
                                         @if($product['item']['user_id'] != 0) @php $user = App\Models\User::find($product['item']['user_id']); @endphp @if(isset($user))
                                         <a target="_blank" href="{{ route('front.product', $product['item']['slug']) }}">{{strlen($product['item']['name']) > 30 ? substr($product['item']['name'],0,30).'...' : $product['item']['name']}}</a> @else
                                         <a target="_blank" href="{{ route('front.product', $product['item']['slug']) }}">
@@ -241,7 +270,7 @@
             </div>
 
             <div class="modal-body">
-                <p class="text-center">{{ $langg->lang320 }} : <span id="key"></span></p>
+                <p class="text-center"><span id="key"></span></p>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">{{ $langg->lang321 }}</button>
@@ -301,7 +330,7 @@
 </script>
 <script type="text/javascript">
     $(document).on('click', '#license', function(e) {
-        var id = $(this).parent().find('input[type=hidden]').val();
+        var id = $(this).parent().find('.serials').html();
         $('#key').html(id);
     });
 </script>

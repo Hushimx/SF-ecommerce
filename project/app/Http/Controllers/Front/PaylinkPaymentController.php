@@ -422,41 +422,30 @@ class PaylinkPaymentController extends Controller
                                         $product_wock_request_id[] = $response_bp["body"]["request_id"];
                                         $response_gr = $wock->getRequest($response_bp["body"]["request_id"]);
                                         if($response_gr["code"]=="200"){
-                                            $serials = [];
-                                            $serial_txt=false;
-                                            $serial_txt_id=null;
                                             foreach($response_gr["body"]["products"][0]["serials"] as $k => $srs){
+                                                $serials = [];
+                                                $serial_txt=[];
                                                 foreach($srs as $serial){
-                                                    if($serial["mimetype"]=="text/plain"){
-                                                        $serial_txt=true;
-                                                        $serial_txt_id=$k;
-                                                        break;
-                                                    }
+                                                    $serials[] = $serial["code"];
+                                                    if($serial["mimetype"] == "text/plain")
+                                                        $serial_txt[] = 1;
+                                                    else
+                                                        $serial_txt[] = 0;
                                                 }
-                                                if($serial_txt)
-                                                    break;
+                                                $product_wock_serial_txt[] = $serial_txt;
+                                                $product_wock_serials[] = $serials;
                                             }
-                                            $k=0;
-                                            if($serial_txt)
-                                            {
-                                                $k = $serial_txt_id;
-                                                $product_wock_serial_txt[] = 1;
-                                            }
-                                            foreach($response_gr["body"]["products"][0]["serials"][$k] as $serial){
-                                                $serials[] = $serial["code"];
-                                            }
-                                            $product_wock_serials[] = join($serials, "$0^0$");
                                         }
                                     }
                                 }
                             }
                         }
                         if($product_wock_request_id)
-                            $product->wock_request_id = join($product_wock_request_id,",");
+                            $product->wock_request_id = json_encode($product_wock_request_id);
                         if($product_wock_serial_txt)
-                            $product->wock_serial_txt = join($product_wock_serial_txt,",");
+                            $product->wock_serial_txt = json_encode($product_wock_serial_txt);
                         if($product_wock_serials)
-                            $product->wock_serials = join($product_wock_serials,",");
+                            $product->wock_serials = json_encode($product_wock_serials);
                         // END WOCK
                         
                         $product->update();

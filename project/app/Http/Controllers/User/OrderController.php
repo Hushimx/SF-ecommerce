@@ -43,6 +43,9 @@ class OrderController extends Controller
     {
         $user = Auth::guard('web')->user();
         $order = Order::findOrfail($id);
+        $order->wock_request_id = json_decode($order->wock_request_id);
+        $order->wock_serials = json_decode($order->wock_serials);
+        $order->wock_serial_txt = json_decode($order->wock_serial_txt);
         $cart = unserialize(bzdecompress(utf8_decode($order->cart)));
         return view('user.order.details',compact('user','order','cart'));
     }
