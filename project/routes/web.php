@@ -1040,7 +1040,7 @@ Route::get('/package/delete/{id}', 'Vendor\PackageController@destroy')->name('ve
   Route::get('/checkout/paylink/paysuccess', 'Front\PaylinkPaymentController@paysuccess')->name('payment.paysuccess');
   Route::get('/checkout/payment/return', 'Front\PaymentController@payreturn')->name('payment.return');
   Route::get('/checkout/payment/cancle', 'Front\PaymentController@paycancle')->name('payment.cancle');
-  Route::post('/checkout/payment/notify', 'Front\PaymentController@notify')->name('payment.notify');
+  Route::get('/checkout/payment/notify', 'Front\PaymentController@notify')->name('payment.notify');
   Route::get('/checkout/instamojo/notify', 'Front\InstamojoController@notify')->name('instamojo.notify');
 
   Route::post('/paystack/submit', 'Front\PaystackController@store')->name('paystack.submit');

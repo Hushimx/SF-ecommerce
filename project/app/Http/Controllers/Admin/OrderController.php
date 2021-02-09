@@ -9,8 +9,10 @@ use App\Models\Order;
 use App\Models\OrderTrack;
 use App\Models\User;
 use App\Models\VendorOrder;
+use App\Models\PaymentGateway;
 use Datatables;
 use Illuminate\Http\Request;
+use App\Classes\WockAPI;
 
 class OrderController extends Controller
 {
@@ -78,21 +80,29 @@ class OrderController extends Controller
         $data = Order::findOrFail($id);
 
         $input = $request->all();
+        
         if ($data->status == "completed"){
-
-        // Then Save Without Changing it.
-            $input['status'] = "completed";
-            $data->update($input);
+            // Then Save Without Changing it.
+                $input['status'] = "completed";
+                $data->update($input);
             //--- Logic Section Ends
-    
+        
 
-        //--- Redirect Section          
-        $msg = 'Status Updated Successfully.';
-        return response()->json($msg);    
-        //--- Redirect Section Ends     
-
+            //--- Redirect Section          
+            $msg = 'Status Updated Successfully.';
+            return response()->json($msg);    
+            //--- Redirect Section Ends     
     
-            }else{
+        }else{
+            if($input["payment_status"] == "Completed"){
+                $manuel_payment = PaymentGateway::where(['title' => $data->method])->first();
+                if($manuel_payment){
+                    // SET WOCK Licence
+                    $wockAPI = new WockAPI();
+                    $return = $wockAPI->getProductsFromCart($id);
+                    // END WOCK
+                }
+            }
             if ($input['status'] == "completed"){
     
                 foreach($data->vendororders as $vorder)
@@ -170,14 +180,14 @@ class OrderController extends Controller
             } 
 
 
-        $order = VendorOrder::where('order_id','=',$id)->update(['status' => $input['status']]);
+            $order = VendorOrder::where('order_id','=',$id)->update(['status' => $input['status']]);
 
-         //--- Redirect Section          
-         $msg = 'Status Updated Successfully.';
-         return response()->json($msg);    
-         //--- Redirect Section Ends    
-    
-            }
+            //--- Redirect Section          
+            $msg = 'Status Updated Successfully.';
+            return response()->json($msg);    
+            //--- Redirect Section Ends    
+
+        }   
 
 
 

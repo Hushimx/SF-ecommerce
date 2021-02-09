@@ -11,15 +11,16 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Stripe
- * @version    2.2.6
+ * @version    2.4.3
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
- * @link       http://cartalyst.com
+ * @copyright  (c) 2011-2021, Cartalyst LLC
+ * @link       https://cartalyst.com
  */
 
 namespace Cartalyst\Stripe\Api;
 
+use RuntimeException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\HandlerStack;
@@ -194,9 +195,14 @@ abstract class Api implements ApiInterface
      * Create the client handler.
      *
      * @return \GuzzleHttp\HandlerStack
+     * @throws \RuntimeException
      */
     protected function createHandler()
     {
+        if (! $this->config->getApiKey()) {
+            throw new RuntimeException('The Stripe API key is not defined!');
+        }
+
         $stack = HandlerStack::create();
 
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
@@ -212,11 +218,13 @@ abstract class Api implements ApiInterface
                 $request = $request->withHeader('Stripe-Account', $accountId);
             }
 
+            $request = $request->withHeader('User-Agent', $this->generateUserAgent());
+
             $request = $request->withHeader('Stripe-Version', $config->getApiVersion());
 
-            $request = $request->withHeader('User-Agent', 'Cartalyst-Stripe/'.$config->getVersion());
-
             $request = $request->withHeader('Authorization', 'Basic '.base64_encode($config->getApiKey()));
+
+            $request = $request->withHeader('X-Stripe-Client-User-Agent', $this->generateClientUserAgentHeader());
 
             return $request;
         }));
@@ -228,5 +236,55 @@ abstract class Api implements ApiInterface
         }));
 
         return $stack;
+    }
+
+    /**
+     * Generates the main user agent string.
+     *
+     * @return string
+     */
+    protected function generateUserAgent()
+    {
+        $appInfo = $this->config->getAppInfo();
+
+        $userAgent = 'Cartalyst-Stripe/'.$this->config->getVersion();
+
+        if ($appInfo || ! empty($appInfo)) {
+            $userAgent .= ' '.$appInfo['name'];
+
+            if ($appVersion = $appInfo['version']) {
+                $userAgent .= "/{$appVersion}";
+            }
+
+            if ($appUrl = $appInfo['url']) {
+                $userAgent .= " ({$appUrl})";
+            }
+        }
+
+        return $userAgent;
+    }
+
+    /**
+     * Generates the client user agent header value.
+     *
+     * @return string
+     */
+    protected function generateClientUserAgentHeader()
+    {
+        $appInfo = $this->config->getAppInfo();
+
+        $userAgent = [
+            'bindings_version' => $this->config->getVersion(),
+            'lang'             => 'php',
+            'lang_version'     => phpversion(),
+            'publisher'        => 'cartalyst',
+            'uname'            => php_uname(),
+        ];
+
+        if ($appInfo || ! empty($appInfo)) {
+            $userAgent['application'] = $appInfo;
+        }
+
+        return json_encode($userAgent);
     }
 }

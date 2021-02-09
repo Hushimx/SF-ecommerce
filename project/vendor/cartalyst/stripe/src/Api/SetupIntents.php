@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Stripe
- * @version    2.2.6
+ * @version    2.4.3
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
- * @link       http://cartalyst.com
+ * @copyright  (c) 2011-2021, Cartalyst LLC
+ * @link       https://cartalyst.com
  */
 
 namespace Cartalyst\Stripe\Api;
@@ -78,5 +78,16 @@ class SetupIntents extends Api
     public function cancel($setupIntentId, array $parameters = [])
     {
         return $this->_post("setup_intents/{$setupIntentId}/cancel", $parameters);
+    }
+
+    /**
+     * Lists all setup intents.
+     *
+     * @param  array  $parameters
+     * @return array
+     */
+    public function all(array $parameters = [])
+    {
+        return $this->_get('setup_intents', $parameters);
     }
 }
