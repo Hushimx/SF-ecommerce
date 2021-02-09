@@ -407,48 +407,13 @@ class PaylinkPaymentController extends Controller
                         $product->adapter_name = $getInvoice['gatewayOrderRequest']['clientName'];
                         $product->payment_status =  "Completed";
                         $product->transfer_date = date("F j, Y, g:i a");
+                        $product->update();
 
                         // SET WOCK Licence
-                        $wock = new WockAPI();
-                        $product_wock_request_id = [];
-                        $product_wock_serial_txt = [];
-                        $product_wock_serials = [];
-                        foreach($tempcart->items as $k=>$item){
-                            $pct = Product::where(['id' => $k,'wock_product' => '1'])->firstOrFail();
-                            if($pct){
-                                if($item["price"]>$pct->wock_product_price){
-                                    $response_bp = $wock->buyProduct($pct->wock_product_id, $item["qty"], $pct->wock_product_price);
-                                    if($response_bp["code"]=="200"){
-                                        $product_wock_request_id[] = $response_bp["body"]["request_id"];
-                                        $response_gr = $wock->getRequest($response_bp["body"]["request_id"]);
-                                        if($response_gr["code"]=="200"){
-                                            foreach($response_gr["body"]["products"][0]["serials"] as $k => $srs){
-                                                $serials = [];
-                                                $serial_txt=[];
-                                                foreach($srs as $serial){
-                                                    $serials[] = $serial["code"];
-                                                    if($serial["mimetype"] == "text/plain")
-                                                        $serial_txt[] = 1;
-                                                    else
-                                                        $serial_txt[] = 0;
-                                                }
-                                                $product_wock_serial_txt[] = $serial_txt;
-                                                $product_wock_serials[] = $serials;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if($product_wock_request_id)
-                            $product->wock_request_id = json_encode($product_wock_request_id);
-                        if($product_wock_serial_txt)
-                            $product->wock_serial_txt = json_encode($product_wock_serial_txt);
-                        if($product_wock_serials)
-                            $product->wock_serials = json_encode($product_wock_serials);
+                        $wockAPI = new WockAPI();
+                        $return = $wockAPI->getProductsFromCart($product->id);
                         // END WOCK
                         
-                        $product->update();
                         if ($product) {
                             
 

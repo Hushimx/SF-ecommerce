@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Classes;
+use App\Models\Product;
+use App\Models\Order;
 
 class WockAPI { // Worldofcdkeys API 
 
@@ -74,6 +76,53 @@ class WockAPI { // Worldofcdkeys API
         if($res)
             return $this->bodyFormat($res->getStatusCode(),$res->getBody());
         return $this->bodyFormat("404",'{"message":"Server error..."}');
+    }
+
+    public function getProductsFromCart($order_id){
+        $order = Order::findOrFail($order_id);
+        if(!$order)
+            return "error";
+        $cart = unserialize(bzdecompress(utf8_decode($order->cart)));
+        $wock_request_id = [];
+        $wock_serial_txt = [];
+        $wock_serials = [];
+        foreach($cart->items as $k=>$item){
+            $pct = Product::where(['id' => $k,'wock_product' => '1'])->firstOrFail();
+            if($pct){
+                if($item["price"]>$pct->wock_product_price){
+                    $response_bp = $this->buyProduct($pct->wock_product_id, $item["qty"], $pct->wock_product_price);
+                    if($response_bp["code"]=="200"){
+                        $wock_request_id[] = $response_bp["body"]["request_id"];
+                        $response_gr = $this->getRequest($response_bp["body"]["request_id"]);
+                        if($response_gr["code"]=="200"){
+                            foreach($response_gr["body"]["products"][0]["serials"] as $k => $srs){
+                                $serials = [];
+                                $serial_txt=[];
+                                foreach($srs as $serial){
+                                    $serials[] = $serial["code"];
+                                    if($serial["mimetype"] == "text/plain")
+                                        $serial_txt[] = 1;
+                                    else
+                                        $serial_txt[] = 0;
+                                }
+                                $wock_serial_txt[] = $serial_txt;
+                                $wock_serials[] = $serials;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+                        
+        if($wock_request_id)
+            $order->wock_request_id = json_encode($wock_request_id);
+        if($wock_serial_txt)
+            $order->wock_serial_txt = json_encode($wock_serial_txt);
+        if($wock_serials)
+            $order->wock_serials = json_encode($wock_serials);
+        $order->update();
+            
+        return "done";
     }
 /** END FUNCTIONS */
 
