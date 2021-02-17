@@ -220,6 +220,9 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::findOrFail($id);
+        $order->wock_request_id = json_decode($order->wock_request_id);
+        $order->wock_serials = json_decode($order->wock_serials);
+        $order->wock_serial_txt = json_decode($order->wock_serial_txt);
         $cart = unserialize(bzdecompress(utf8_decode($order->cart)));
         return view('admin.order.details',compact('order','cart'));
     }

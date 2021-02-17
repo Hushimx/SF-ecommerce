@@ -328,7 +328,9 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                <?php $ind=-1; ?>
                                 @foreach($cart->items as $key => $product)
+                                <?php $ind++; ?>
                                     <tr>
                                         
                                             <td><input type="hidden" value="{{$key}}">{{ $product['item']['id'] }}</td>
@@ -359,7 +361,38 @@
 
 
                                             <td>
-                                                <input type="hidden" value="{{ $product['license'] }}">
+                                                <div style="display:none" class="serials">
+                                                    <?php $i=1; ?>
+                                                    @for($j=0; $j<=$product['qty']-1; $j++)
+                                                        @if(isset($order->wock_serials[$ind]))
+                                                            {{ __('The Licenes Key is') }}
+                                                            @if($product['qty']>1)
+                                                                {{$i}} 
+                                                                <?php $i++; ?>
+                                                            @endif 
+                                                            :
+                                                            @for($k=0; $k<count($order->wock_serials[$ind]); $k++)
+                                                                @if($order->wock_serial_txt[$ind][$k]==1)
+                                                                    <b>{{ $order->wock_serials[$ind][$k] }}</b>
+                                                                    @if($k<count($order->wock_serials[$ind])-1)
+                                                                    ,
+                                                                    @endif
+                                                                @else
+                                                                    <img width="180px" src="data:image/png;base64, {{ $order->wock_serials[$ind][$k] }}" alt="{{ $langg->lang320 }}  {{$i}}"/>
+                                                                @endif
+                                                            @endfor
+
+                                                            @if($j<$product['qty']-1)
+                                                                <br/>
+                                                            @endif
+                                                        @else
+                                                            {{ __('The Licenes Key is') }} : {{ $product['license'] }}
+                                                        @endif
+                                                        @if($j<$product['qty']-1)
+                                                            <?php $ind++; ?>
+                                                        @endif
+                                                    @endfor
+                                                </div>
 
                                                 @if($product['item']['user_id'] != 0)
                                                 @php
@@ -427,7 +460,7 @@
     </div>
 
                 <div class="modal-body">
-                    <p class="text-center">{{ __('The Licenes Key is') }} :  <span id="key"></span> <a href="javascript:;" id="license-edit">{{ __('Edit License') }}</a><a href="javascript:;" id="license-cancel" class="showbox">{{ __('Cancel') }}</a></p>
+                    <p class="text-center"><span id="key"></span><a href="javascript:;" id="license-edit"><br/>{{ __('Edit License') }}</a><a href="javascript:;" id="license-cancel" class="showbox">{{ __('Cancel') }}</a></p>
                     <form method="POST" action="{{route('admin-order-license',$order->id)}}" id="edit-license" style="display: none;">
                         {{csrf_field()}}
                         <input type="hidden" name="license_key" id="license-key" value="">
@@ -542,11 +575,9 @@ $('#example2').dataTable( {
 
     <script type="text/javascript">
         $(document).on('click','#license' , function(e){
-            var id = $(this).parent().find('input[type=hidden]').val();
-            var key = $(this).parent().parent().find('input[type=hidden]').val();
+            var id = $(this).parent().find('.serials').html();
             $('#key').html(id);  
-            $('#license-key').val(key);    
-    });
+        });
         $(document).on('click','#license-edit' , function(e){
             $(this).hide();
             $('#edit-license').show();

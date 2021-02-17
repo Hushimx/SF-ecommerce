@@ -514,13 +514,13 @@
 								</div>
 								<div class="col-lg-7">
 									<select onchange="wockChange()" id="wock_product" name="wock_product">
-										<option value="0" {{ $data->wockAPI == 0 ? 'selected':'' }}>False</option>
-										<option value="1" {{ $data->wockAPI == 1 ? 'selected':'' }}>True</option>
+										<option value="0" {{ $data->wock_product == 0 ? 'selected':'' }}>False</option>
+										<option value="1" {{ $data->wock_product == 1 ? 'selected':'' }}>True</option>
 									</select>
 								</div>
 							</div>
 
-							<div id="wock_product_id_container" style="display:none" class="row">
+							<div id="wock_product_id_container" style="{{ $data->wock_product?'':'display:none' }}" class="row">
 								<div class="col-lg-4">
 									<div class="left-area">
 										<h4 class="heading">Product ID* </h4>
@@ -528,7 +528,7 @@
 									</div>
 								</div>
 								<div class="col-lg-7">
-									<input type="text" class="input-field" placeholder="Ex: 123" name="wock_product_id" id="wock_product_id" value="{{ $data->wockAPIid }}">
+									<input type="text" class="input-field" placeholder="Ex: 123" name="wock_product_id" id="wock_product_id" value="{{ $data->wock_product_id }}">
 								</div>
 							</div>
 
