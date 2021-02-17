@@ -22,7 +22,7 @@ class WockAPI { // Worldofcdkeys API
     public function getProducts($ids=""){
         $params = "";
         if($ids)
-            $params = "?product_id=".implode($ids, ",");
+            $params = "?product_id=".implode(",", $ids);
 
         try{
             $res = $this->client->request('GET', 'products'.$params, $this->headers);
