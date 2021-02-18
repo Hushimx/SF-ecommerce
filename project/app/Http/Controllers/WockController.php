@@ -28,7 +28,7 @@ class WockController extends Controller
 
         // Update product quantities 
         foreach($response["body"]["products"] as $product){
-            $product_to_update =  Product::where('wock_product_id', '=', $product["product_id"])->firstOrFail();
+            $product_to_update =  Product::where('wock_product_id', '=', $product["product_id"])->first();
             if($product_to_update){
                 $product_to_update->license_qty = $product["quantity"];
                 $product_to_update->wock_product_price = $product["price"];

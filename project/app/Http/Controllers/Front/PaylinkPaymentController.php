@@ -254,6 +254,7 @@ class PaylinkPaymentController extends Controller
         }
         $GetToken = $this->GetToken();
 
+        dd($GetToken);
         $backcall = Addinv($GetToken, $order, $te, $success_url);
 
         if ($backcall['success'] == true) {

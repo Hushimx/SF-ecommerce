@@ -87,7 +87,7 @@ class WockAPI { // Worldofcdkeys API
         $wock_serial_txt = [];
         $wock_serials = [];
         foreach($cart->items as $k=>$item){
-            $pct = Product::where(['id' => $k,'wock_product' => '1'])->firstOrFail();
+            $pct = Product::where(['id' => $k,'wock_product' => '1'])->first();
             if($pct){
                 if($item["price"]>$pct->wock_product_price){
                     $response_bp = $this->buyProduct($pct->wock_product_id, $item["qty"], $pct->wock_product_price);
