@@ -178,11 +178,16 @@
                                 <tr>
                                     <td>{{ $product['item']['id'] }}</td>
                                     <td>
+                                        @php
+                                        $prod_wock = App\Models\Product::find($product['item']['id'])->wock_product;
+                                        @endphp
+                                        <input type="hidden" value="{{ $product['license'] }}">
                                         <div style="display:none" class="serials">
+                                        @if($prod_wock)
                                             <?php $i=1; ?>
                                             @for($j=0; $j<=$product['qty']-1; $j++)
                                                 @if(isset($order->wock_serials[$ind]))
-                                                    {{ $langg->lang320 }} 
+                                                    {{ __('The Licenes Key is') }}
                                                     @if($product['qty']>1)
                                                         {{$i}} 
                                                         <?php $i++; ?>
@@ -209,6 +214,9 @@
                                                     <?php $ind++; ?>
                                                 @endif
                                             @endfor
+                                        @else
+                                            {{ $langg->lang320 }} : {{ $product['license'] }}
+                                        @endif
                                         </div>
                                         @if($product['item']['user_id'] != 0) @php $user = App\Models\User::find($product['item']['user_id']); @endphp @if(isset($user))
                                         <a target="_blank" href="{{ route('front.product', $product['item']['slug']) }}">{{strlen($product['item']['name']) > 30 ? substr($product['item']['name'],0,30).'...' : $product['item']['name']}}</a> @else

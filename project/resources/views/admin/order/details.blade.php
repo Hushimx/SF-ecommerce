@@ -328,9 +328,8 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                <?php $ind=-1; ?>
+                                <?php $ind=0; ?>
                                 @foreach($cart->items as $key => $product)
-                                <?php $ind++; ?>
                                     <tr>
                                         
                                             <td><input type="hidden" value="{{$key}}">{{ $product['item']['id'] }}</td>
@@ -361,7 +360,12 @@
 
 
                                             <td>
+                                                @php
+                                                $prod_wock = App\Models\Product::find($product['item']['id'])->wock_product;
+                                                @endphp
+                                                <input type="hidden" value="{{ $product['license'] }}">
                                                 <div style="display:none" class="serials">
+                                                @if($prod_wock)
                                                     <?php $i=1; ?>
                                                     @for($j=0; $j<=$product['qty']-1; $j++)
                                                         @if(isset($order->wock_serials[$ind]))
@@ -392,7 +396,11 @@
                                                             <?php $ind++; ?>
                                                         @endif
                                                     @endfor
+                                                @else
+                                                    {{ __('The Licenes Key is') }} : {{ $product['license'] }}
+                                                @endif
                                                 </div>
+                                                
 
                                                 @if($product['item']['user_id'] != 0)
                                                 @php
@@ -574,9 +582,15 @@ $('#example2').dataTable( {
 </script>
 
     <script type="text/javascript">
+        // $(document).on('click','#license' , function(e){
+        //     var id = $(this).parent().find('.serials').html();
+        //     $('#key').html(id);  
+        // });
         $(document).on('click','#license' , function(e){
             var id = $(this).parent().find('.serials').html();
+            var key = $(this).parent().parent().find('input[type=hidden]').val();
             $('#key').html(id);  
+            $('#license-key').val(key);    
         });
         $(document).on('click','#license-edit' , function(e){
             $(this).hide();
