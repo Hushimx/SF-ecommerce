@@ -328,7 +328,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                <?php $ind=0; ?>
+                                <?php $ind=-1; ?>
                                 @foreach($cart->items as $key => $product)
                                     <tr>
                                         
@@ -367,6 +367,7 @@
                                                 <div style="display:none" class="serials">
                                                 @if($prod_wock)
                                                     <?php $i=1; ?>
+                                                    <?php $ind++; ?>
                                                     @for($j=0; $j<=$product['qty']-1; $j++)
                                                         @if(isset($order->wock_serials[$ind]))
                                                             {{ __('The Licenes Key is') }}
@@ -391,9 +392,6 @@
                                                             @endif
                                                         @else
                                                             {{ __('The Licenes Key is') }} : {{ $product['license'] }}
-                                                        @endif
-                                                        @if($j<$product['qty']-1)
-                                                            <?php $ind++; ?>
                                                         @endif
                                                     @endfor
                                                 @else
